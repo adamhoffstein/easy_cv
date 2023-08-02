@@ -1,8 +1,13 @@
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
 from .forms import JobDescriptionForm
 from .models import JobDescription
+
+
+def index(request):
+    return render(request, "cv/index.html")
 
 
 class JobDescriptionCreateView(generic.CreateView):

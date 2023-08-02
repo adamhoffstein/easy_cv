@@ -4,6 +4,11 @@ from . import views
 
 urlpatterns = [
     path(
+        "",
+        views.index,
+        name="index",
+    ),
+    path(
         "job_descriptions",
         views.JobDescriptionListView.as_view(),
         name="job_description_list",
