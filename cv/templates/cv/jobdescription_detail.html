@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <a href="{% url 'job_description_list' %}">Back</a>
+    <a href="{% url 'job_description_edit' pk=job_description.id %}">Edit</a>
+    <p>{{ job_description.title }}</p>
+    <p>{{ job_description.raw_text }}</p>
+{% endblock %}
