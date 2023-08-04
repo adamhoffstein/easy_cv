@@ -11,7 +11,6 @@ from model_utils import fields
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = fields.AutoLastModifiedField()
     created_by = models.ForeignKey(
         "auth.User", on_delete=models.SET_NULL, null=True
     )
@@ -33,6 +32,7 @@ class BaseModel(models.Model):
 
 class Tag(BaseModel):
     name = models.CharField(max_length=120, unique=True)
+    updated_at = fields.AutoLastModifiedField()
     keywords = models.CharField(
         max_length=500,
         validators=[
@@ -62,6 +62,7 @@ class Tag(BaseModel):
 
 class Company(BaseModel):
     name = models.CharField(max_length=120, unique=True, blank=True)
+    updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
     def __str__(self) -> str:
@@ -78,17 +79,20 @@ class Company(BaseModel):
 class ExperiencePoint(BaseModel):
     name = models.CharField(max_length=500)
     tags = models.ManyToManyField(Tag)
+    updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
 
 class Resume(BaseModel):
     title = models.CharField(max_length=120)
+    updated_at = fields.AutoLastModifiedField()
     experience_points = models.ManyToManyField(ExperiencePoint)
     history = HistoricalRecords()
 
 
 class JobDescription(BaseModel):
     title = models.CharField(max_length=120)
+    updated_at = fields.AutoLastModifiedField()
     raw_text = models.TextField(max_length=5000, null=True)
     tags = models.ManyToManyField(Tag)
     company = models.ForeignKey(
@@ -97,7 +101,7 @@ class JobDescription(BaseModel):
     history = HistoricalRecords()
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.title} at {self.company}"
 
     def get_tags(self) -> None:
         jd_tags = []

@@ -9,11 +9,13 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ tag.name }}</h5>
+                    <small class="text-muted">Last Modified {{ tag.updated_at }}</small>
                 </div>
                 <div class="card-body">
                     <a href="{{ tag.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
                     <a href="{% url 'tag_edit' pk=tag.id %}" class="btn btn-outline-primary">Edit</a>
-                    <a href="{% url 'tag_delete' pk=tag.id %}?page=list_view" class="save btn btn-outline-danger">Delete</a>
+                    <a href="{% url 'tag_delete' pk=tag.id %}?page=list_view"
+                       class="save btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         {% endfor %}

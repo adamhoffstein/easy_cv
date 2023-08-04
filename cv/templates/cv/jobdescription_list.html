@@ -9,12 +9,13 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ job_description.title }} at {{ job_description.company }}</h5>
-                    <p class="card-text">{{ job_description.raw_text }}</p>
+                    <small class="text-muted">Last Modified {{ job_description.updated_at }}</small>
                 </div>
                 <div class="card-body">
                     <a href="{{ job_description.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
                     <a href="{% url 'job_description_edit' pk=job_description.id %}" class="btn btn-outline-primary">Edit</a>
-                    <a href="{% url 'job_description_delete' pk=job_description.id %}?page=list_view" class="save btn btn-danger">Delete</a>
+                    <a href="{% url 'job_description_delete' pk=job_description.id %}?page=list_view"
+                       class="save btn btn-danger">Delete</a>
                 </div>
             </div>
         {% endfor %}

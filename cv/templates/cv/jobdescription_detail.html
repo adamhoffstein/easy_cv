@@ -9,6 +9,7 @@
         <span>None :(</span>
     {% endif %}
     <div class="row mt-2">
+        <small class="text-muted">Created {{ job_description.created_at }}</small>
         <p>{{ job_description.title }} at {{ job_description.company }}</p>
         <pre>{{ job_description.raw_text }}</pre>
     </div>
