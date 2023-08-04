@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="mb-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'tag_add' %}" class="btn btn-primary">Add</a>
+    </div>
+    {% if tag_list %}
+        {% for tag in tag_list %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tag.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ tag.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
+                    <a href="{% url 'tag_edit' pk=tag.id %}" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'tag_delete' pk=tag.id %}?page=list_view" class="save btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>There are no tags.</p>
+    {% endif %}
+{% endblock %}

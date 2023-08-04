@@ -1,17 +1,44 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-
-from .models import JobDescription
+from dal import autocomplete
+from .models import JobDescription, Tag, Company
 
 
 class JobDescriptionForm(forms.ModelForm):
     class Meta:
         model = JobDescription
-        fields = ("title", "raw_text")
+        fields = ("title", "raw_text", "company")
+        widgets = {
+            "company": autocomplete.ModelSelect2(url="company-autocomplete")
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Save JobDescription"))
+
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ("name", "keywords")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Save Tag"))
+
+
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = ("name",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Save Company"))

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Resume, Tag, ExperiencePoint, Company, JobDescription
 
+from django.core.paginator import Paginator
+
 
 class BaseAdmin(admin.ModelAdmin):
     exclude = ["created_by", "last_edited_by"]

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row mt-2">
+        <p>{{ company.name }}</p>
+    </div>
+    <div class="row mt-2">
+        <div class="d-grid gap-2">
+            <a href="{% url 'company_list' %}" class="btn btn-primary">Back</a>
+            <a href="{% url 'company_delete' pk=company.id %}" class="save btn btn-danger">Delete</a>
+        </div>
+    </div>
+{% endblock %}

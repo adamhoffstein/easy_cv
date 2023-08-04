@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <span>Synonyms: </span>{% for keyword in tag.get_keywords %}
+    <span class="badge bg-secondary">{{ keyword }}</span>
+{% endfor %}
+    <div class="row mt-2">
+        <p>{{ tag.name }}</p>
+    </div>
+    <div class="row mt-2">
+        <div class="d-grid gap-2">
+            <a href="{% url 'tag_list' %}" class="btn btn-primary">Back</a>
+            <a href="{% url 'tag_edit' pk=job_description.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'tag_delete' pk=tag.id %}" class="save btn btn-danger">Delete</a>
+        </div>
+    </div>
+{% endblock %}

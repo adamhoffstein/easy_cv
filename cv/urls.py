@@ -9,6 +9,13 @@ urlpatterns = [
         name="index",
     ),
     path(
+        "company-autocomplete",
+        views.CompanyAutocomplete.as_view(
+            create_field="name", validate_create=True
+        ),
+        name="company-autocomplete",
+    ),
+    path(
         "job_descriptions",
         views.JobDescriptionListView.as_view(),
         name="job_description_list",
@@ -31,6 +38,56 @@ urlpatterns = [
     path(
         "job_descriptions/delete/<int:pk>/",
         views.JobDescriptionDeleteView.as_view(),
-        name="delete",
+        name="job_description_delete",
+    ),
+    path(
+        "tags",
+        views.TagListView.as_view(),
+        name="tag_list",
+    ),
+    path(
+        "tags/add/",
+        views.TagCreateView.as_view(),
+        name="tag_add",
+    ),
+    path(
+        "tags/edit/<int:pk>/",
+        views.TagUpdateView.as_view(),
+        name="tag_edit",
+    ),
+    path(
+        "tags/details/<int:pk>/",
+        views.TagDetailView.as_view(),
+        name="tag_details",
+    ),
+    path(
+        "tags/delete/<int:pk>/",
+        views.TagDeleteView.as_view(),
+        name="tag_delete",
+    ),
+    path(
+        "companies",
+        views.CompanyListView.as_view(),
+        name="company_list",
+    ),
+    path(
+        "companies/add/",
+        views.CompanyCreateView.as_view(),
+        name="company_add",
+    ),
+    path(
+        "companies/edit/<int:pk>/",
+        views.CompanyUpdateView.as_view(),
+        name="company_edit",
+    ),
+    path(
+        "companies/details/<int:pk>/",
+        views.CompanyDetailView.as_view(),
+        name="company_details",
+    ),
+    path(
+        "companies/delete/<int:pk>/",
+        views.CompanyDeleteView.as_view(),
+        name="company_delete",
     ),
 ]

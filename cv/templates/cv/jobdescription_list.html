@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <a href="{% url 'job_description_add' %}">Add</a>
+    <div class="mb-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'job_description_add' %}" class="btn btn-primary">Add</a>
+    </div>
     {% if job_description_list %}
-        <ul>
-            {% for job_description in job_description_list %}
-                <li>
-                    <a href="{{ job_description.get_absolute_url }}">{{ job_description.title }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+        {% for job_description in job_description_list %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job_description.title }} at {{ job_description.company }}</h5>
+                    <p class="card-text">{{ job_description.raw_text }}</p>
+                </div>
+                <div class="card-body">
+                    <a href="{{ job_description.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
+                    <a href="{% url 'job_description_edit' pk=job_description.id %}" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'job_description_delete' pk=job_description.id %}?page=list_view" class="save btn btn-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
     {% else %}
         <p>There are no job descriptions.</p>
     {% endif %}
