@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row mt-2">
+        <div>
+            <small class="text-muted">Created {{ resumejob.created_at }}</small>
+            <p class="mb-0">{{ resumejob.title }} at {{ resumejob.company }}</p>
+            <i class="text-muted">{{ resumejob.company_description }}</i>
+            <p class="pt-2">{{ resumejob.start_at }} - {{ resumejob.end_at }}</p>
+        </div>
+        {% for job_duty in resumejob.job_duties.all %}
+            <div>
+                <div class="card-body pb-0 pt-0">
+                    <div class="card-title mb-0">
+                        <b>{{ job_duty.title }}</b>
+                    </div>
+                    <ul>
+                        {% for experience_point in job_duty.experience_points.all %}
+                            <li>{{ experience_point }}
+                                {% for tag in experience_point.tags.all %}
+                                    <span class="badge bg-secondary">{{ tag | title }}</span>
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+    <div class="row mt-2">
+        <div class="d-grid gap-2">
+            <a href="{% url 'resume_job_list' %}" class="btn btn-primary">Back</a>
+            <a href="{% url 'resume_job_edit' pk=resumejob.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'resume_job_delete' pk=resumejob.id %}" class="save btn btn-danger">Delete</a>
+        </div>
+    </div>
+{% endblock %}

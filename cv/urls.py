@@ -90,4 +90,29 @@ urlpatterns = [
         views.CompanyDeleteView.as_view(),
         name="company_delete",
     ),
+    path(
+        "resume_jobs",
+        views.ResumeJobListView.as_view(),
+        name="resume_job_list",
+    ),
+    path(
+        "resume_jobs/add/",
+        views.ResumeJobCreateView.as_view(),
+        name="resume_job_add",
+    ),
+    path(
+        "resume_jobs/edit/<int:pk>/",
+        views.ResumeJobUpdateView.as_view(),
+        name="resume_job_edit",
+    ),
+    path(
+        "resume_jobs/details/<int:pk>/",
+        views.ResumeJobDetailView.as_view(),
+        name="resume_job_details",
+    ),
+    path(
+        "resume_jobs/delete/<int:pk>/",
+        views.ResumeJobDeleteView.as_view(),
+        name="resume_job_delete",
+    ),
 ]

@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-    <span>Synonyms: </span>{% for keyword in tag.get_keywords %}
+    <span>Contains: </span>{% for keyword in tag.keyword_contains %}
     <span class="badge bg-secondary">{{ keyword }}</span>
 {% endfor %}
+    {% if tag.keyword_excludes %}
+        <br>
+        <span>Excludes: </span>{% for keyword in tag.keyword_excludes %}
+        <span class="badge bg-secondary">{{ keyword }}</span>
+    {% endfor %}
+    {% endif %}
     <div class="row mt-2">
         <p>{{ tag.name }}</p>
     </div>

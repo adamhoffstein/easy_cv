@@ -3,8 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import JobDescriptionForm, TagForm, CompanyForm
-from .models import JobDescription, Tag, Company
+from .forms import JobDescriptionForm, TagForm, CompanyForm, ResumeJobForm
+from .models import JobDescription, Tag, Company, ResumeJob
 
 
 def index(request):
@@ -119,3 +119,38 @@ class CompanyDetailView(generic.DetailView):
 class CompanyDeleteView(generic.DeleteView):
     model = Company
     success_url = reverse_lazy("company_list")
+
+
+class ResumeJobCreateView(generic.CreateView):
+    model = ResumeJob
+    form_class = ResumeJobForm
+
+
+class ResumeJobListView(generic.ListView):
+    model = ResumeJob
+    context_object_name = "resumejob_list"
+    paginate_by = 10
+
+    def get_queryset(self) -> list[ResumeJob]:
+        return ResumeJob.objects.all().order_by("-created_at")
+
+
+class ResumeJobUpdateView(generic.UpdateView):
+    model = ResumeJob
+    form_class = ResumeJobForm
+
+    def get_queryset(self):
+        return ResumeJob.objects.all()
+
+
+class ResumeJobDetailView(generic.DetailView):
+    model = ResumeJob
+    context_object_name = "resumejob"
+
+    def get_queryset(self):
+        return ResumeJob.objects.all()
+
+
+class ResumeJobDeleteView(generic.DeleteView):
+    model = ResumeJob
+    success_url = reverse_lazy("job_list")

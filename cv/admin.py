@@ -1,7 +1,14 @@
 from django.contrib import admin
-from .models import Resume, Tag, ExperiencePoint, Company, JobDescription
 
-from django.core.paginator import Paginator
+from .models import (
+    Resume,
+    ResumeJob,
+    ResumeJobDuty,
+    Tag,
+    ExperiencePoint,
+    Company,
+    JobDescription,
+)
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -13,6 +20,16 @@ class ResumeAdmin(BaseAdmin):
     list_display = ["title", "created_at", "updated_at"]
 
 
+@admin.register(ResumeJob)
+class ResumeJobAdmin(BaseAdmin):
+    list_display = ["title", "created_at", "updated_at"]
+
+
+@admin.register(ResumeJobDuty)
+class ResumeJobDutyAdmin(BaseAdmin):
+    list_display = ["title", "created_at", "updated_at"]
+
+
 @admin.register(Tag)
 class TagAdmin(BaseAdmin):
     list_display = ["name", "created_at", "updated_at"]
@@ -20,7 +37,7 @@ class TagAdmin(BaseAdmin):
 
 @admin.register(ExperiencePoint)
 class ExperiencePointAdmin(BaseAdmin):
-    list_display = ["name", "created_at", "updated_at"]
+    list_display = ["content", "created_at", "updated_at"]
 
 
 @admin.register(Company)
