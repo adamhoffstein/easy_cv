@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="mb-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'resume_add' %}" class="btn btn-primary">Add</a>
+    </div>
+    {% if resume_list %}
+        {% for resume in resume_list %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ resume.title }}</h5>
+                    <small class="text-muted">Last Modified {{ resume.updated_at }}</small>
+                </div>
+                <div class="card-body">
+                    <a href="{{ resume.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
+                    <a href="{% url 'resume_edit' pk=resume.id %}?page=list_view" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'resume_delete' pk=resume.id %}?page=list_view"
+                       class="save btn btn-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You haven't created any resumes.</p>
+    {% endif %}
+{% endblock %}

@@ -150,14 +150,36 @@ class ResumeJobDuty(BaseModel):
         verbose_name_plural = "Job duties"
 
 
+class ResumeEducation(BaseModel):
+    school = models.CharField(max_length=120)
+    location = models.CharField(max_length=120)
+    degree = models.CharField(max_length=120)
+    updated_at = fields.AutoLastModifiedField()
+    start_at_year = models.IntegerField(null=True, blank=True)
+    end_at_year = models.IntegerField()
+    history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse("resume_education_details", kwargs={"pk": self.pk})
+
+    def __str__(self) -> str:
+        return f"{self.degree} - {self.school}, {self.location} ({self.end_at_year})"
+
+
 class Resume(BaseModel):
     title = models.CharField(max_length=120)
     updated_at = fields.AutoLastModifiedField()
     jobs = models.ManyToManyField(ResumeJob)
-    education = models.CharField(max_length=500, null=True)
-    skills = models.CharField(max_length=500, null=True)
+    education = models.ManyToManyField(ResumeEducation)
+    skills = models.TextField(max_length=1000, null=True)
     languages = models.CharField(max_length=500, null=True)
     history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse("resume_details", kwargs={"pk": self.pk})
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class JobDescription(BaseModel):
@@ -201,7 +223,10 @@ def update_job_description_tags(sender, instance, created, **kwargs) -> None:
 def update_resume_job_duties(sender, instance, created, **kwargs) -> None:
     instance.job_duties.all().delete()
     job_duty_bullet_point_parts = [
-        b for b in instance.job_duty_raw_text.split("\n")
+        b.strip() for b in instance.job_duty_raw_text.split("\n")
+    ]
+    job_duty_bullet_point_parts = [
+        p for p in job_duty_bullet_point_parts if p != ""
     ]
     k = job_duty_bullet_point_parts[0]
     job_duty_bullet_points = {k: []}

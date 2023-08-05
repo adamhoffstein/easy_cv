@@ -2,7 +2,14 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from dal import autocomplete
-from .models import JobDescription, Tag, Company, ResumeJob
+from .models import (
+    JobDescription,
+    Tag,
+    Company,
+    ResumeJob,
+    Resume,
+    ResumeEducation,
+)
 
 
 class JobDescriptionForm(forms.ModelForm):
@@ -61,3 +68,39 @@ class ResumeJobForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Save Job"))
+
+
+class ResumeForm(forms.ModelForm):
+    class Meta:
+        model = Resume
+        fields = (
+            "title",
+            "jobs",
+            "education",
+            "skills",
+            "languages",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Save Resume"))
+
+
+class ResumeEducationForm(forms.ModelForm):
+    class Meta:
+        model = ResumeEducation
+        fields = (
+            "school",
+            "degree",
+            "location",
+            "start_at_year",
+            "end_at_year",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Save Education"))

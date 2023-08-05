@@ -115,4 +115,54 @@ urlpatterns = [
         views.ResumeJobDeleteView.as_view(),
         name="resume_job_delete",
     ),
+    path(
+        "resumes",
+        views.ResumeListView.as_view(),
+        name="resume_list",
+    ),
+    path(
+        "resumes/add/",
+        views.ResumeCreateView.as_view(),
+        name="resume_add",
+    ),
+    path(
+        "resumes/edit/<int:pk>/",
+        views.ResumeUpdateView.as_view(),
+        name="resume_edit",
+    ),
+    path(
+        "resumes/details/<int:pk>/",
+        views.ResumeDetailView.as_view(),
+        name="resume_details",
+    ),
+    path(
+        "resumes/delete/<int:pk>/",
+        views.ResumeDeleteView.as_view(),
+        name="resume_delete",
+    ),
+    path(
+        "resume_education",
+        views.ResumeEducationListView.as_view(),
+        name="resume_education_list",
+    ),
+    path(
+        "resume_education/add/",
+        views.ResumeEducationCreateView.as_view(),
+        name="resume_education_add",
+    ),
+    path(
+        "resume_education/edit/<int:pk>/",
+        views.ResumeEducationUpdateView.as_view(),
+        name="resume_education_edit",
+    ),
+    path(
+        "resume_education/details/<int:pk>/",
+        views.ResumeEducationDetailView.as_view(),
+        name="resume_education_details",
+    ),
+    path(
+        "education/delete/<int:pk>/",
+        views.ResumeEducationDeleteView.as_view(),
+        name="resume_education_delete",
+    ),
 ]

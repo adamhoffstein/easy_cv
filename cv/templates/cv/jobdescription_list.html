@@ -13,9 +13,9 @@
                 </div>
                 <div class="card-body">
                     <a href="{{ job_description.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
-                    <a href="{% url 'job_description_edit' pk=job_description.id %}" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'job_description_edit' pk=job_description.id %}?page=list_view" class="btn btn-outline-primary">Edit</a>
                     <a href="{% url 'job_description_delete' pk=job_description.id %}?page=list_view"
-                       class="save btn btn-danger">Delete</a>
+                       class="save btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         {% endfor %}

@@ -11,7 +11,7 @@
             <div>
                 <div class="card-body pb-0 pt-0">
                     <div class="card-title mb-0">
-                        <b>{{ job_duty.title }}</b>
+                        <b>Title: {{ job_duty.title }}</b>
                     </div>
                     <ul>
                         {% for experience_point in job_duty.experience_points.all %}
@@ -25,7 +25,6 @@
                 </div>
             </div>
         {% endfor %}
-
     </div>
     <div class="row mt-2">
         <div class="d-grid gap-2">

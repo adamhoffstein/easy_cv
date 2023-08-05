@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="mb-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'resume_education_add' %}" class="btn btn-primary">Add</a>
+    </div>
+    {% if resume_education_list %}
+        {% for resume_education in resume_education_list %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ resume_education.degree }} at {{ resume_education.school }}
+                        ({{ resume_education.end_at_year }})</h5>
+                    <small class="text-muted">Last Modified {{ resume_education.updated_at }}</small>
+                </div>
+                <div class="card-body">
+                    <a href="{{ resume_education.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
+                    <a href="{% url 'resume_education_edit' pk=resume_education.id %}?page=list_view" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'resume_education_delete' pk=resume_education.id %}?page=list_view"
+                       class="save btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You haven't added any education.</p>
+    {% endif %}
+{% endblock %}

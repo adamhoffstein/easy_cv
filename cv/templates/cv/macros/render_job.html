@@ -1,0 +1,27 @@
+<div class="row mt-2">
+    <div class="row justify-content-between">
+        <div class="col-auto me-auto">
+            <p class="mb-0">{{ resumejob.title }} at {{ resumejob.company }}</p>
+            <i class="text-muted">{{ resumejob.company_description }}</i>
+        </div>
+        <div class="col-auto">
+            <p class="mb-0">{{ resumejob.start_at }} - {{ resumejob.end_at }}</p>
+        </div>
+    </div>
+    {% for job_duty in resumejob.job_duties.all %}
+        <div>
+            <div class="card-title mb-0">
+                <b>{{ job_duty.title }}</b>
+            </div>
+            <ul>
+                {% for experience_point in job_duty.experience_points.all %}
+                    <li>{{ experience_point }}
+                        {% for tag in experience_point.tags.all %}
+                            <span class="badge bg-secondary">{{ tag | title }}</span>
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>

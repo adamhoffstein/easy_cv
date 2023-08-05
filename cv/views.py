@@ -3,8 +3,22 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import JobDescriptionForm, TagForm, CompanyForm, ResumeJobForm
-from .models import JobDescription, Tag, Company, ResumeJob
+from .forms import (
+    JobDescriptionForm,
+    TagForm,
+    CompanyForm,
+    ResumeJobForm,
+    ResumeForm,
+    ResumeEducationForm,
+)
+from .models import (
+    JobDescription,
+    Tag,
+    Company,
+    ResumeJob,
+    Resume,
+    ResumeEducation,
+)
 
 
 def index(request):
@@ -154,3 +168,73 @@ class ResumeJobDetailView(generic.DetailView):
 class ResumeJobDeleteView(generic.DeleteView):
     model = ResumeJob
     success_url = reverse_lazy("resume_job_list")
+
+
+class ResumeCreateView(generic.CreateView):
+    model = Resume
+    form_class = ResumeForm
+
+
+class ResumeListView(generic.ListView):
+    model = Resume
+    context_object_name = "resume_list"
+    paginate_by = 10
+
+    def get_queryset(self) -> list[Resume]:
+        return Resume.objects.all().order_by("-created_at")
+
+
+class ResumeUpdateView(generic.UpdateView):
+    model = Resume
+    form_class = ResumeForm
+
+    def get_queryset(self):
+        return Resume.objects.all()
+
+
+class ResumeDetailView(generic.DetailView):
+    model = Resume
+    context_object_name = "resume"
+
+    def get_queryset(self):
+        return Resume.objects.all()
+
+
+class ResumeDeleteView(generic.DeleteView):
+    model = Resume
+    success_url = reverse_lazy("resume_list")
+
+
+class ResumeEducationCreateView(generic.CreateView):
+    model = ResumeEducation
+    form_class = ResumeEducationForm
+
+
+class ResumeEducationListView(generic.ListView):
+    model = ResumeEducation
+    context_object_name = "resume_education_list"
+    paginate_by = 10
+
+    def get_queryset(self) -> list[ResumeEducation]:
+        return ResumeEducation.objects.all().order_by("-created_at")
+
+
+class ResumeEducationUpdateView(generic.UpdateView):
+    model = ResumeEducation
+    form_class = ResumeEducationForm
+
+    def get_queryset(self):
+        return ResumeEducation.objects.all()
+
+
+class ResumeEducationDetailView(generic.DetailView):
+    model = ResumeEducation
+    context_object_name = "resume_education"
+
+    def get_queryset(self):
+        return ResumeEducation.objects.all()
+
+
+class ResumeEducationDeleteView(generic.DeleteView):
+    model = ResumeEducation
+    success_url = reverse_lazy("resume_education_list")
