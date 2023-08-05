@@ -153,4 +153,4 @@ class ResumeJobDetailView(generic.DetailView):
 
 class ResumeJobDeleteView(generic.DeleteView):
     model = ResumeJob
-    success_url = reverse_lazy("job_list")
+    success_url = reverse_lazy("resume_job_list")

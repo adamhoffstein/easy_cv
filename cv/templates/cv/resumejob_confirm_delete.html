@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="post">{% csrf_token %}
+        <p>Are you sure you want to delete "{{ resumejob }}" and all of its associated job duties?</p>
+        {% if request.GET.page == 'list_view' %}
+            <a href="{% url 'resume_job_list' %}" class="btn btn-outline-primary">Cancel</a>
+        {% else %}
+            <a href="{{ resumejob.get_absolute_url }}" class="btn btn-outline-primary">Cancel</a>
+        {% endif %}
+        <button type="submit" class="btn btn-outline-primary">Confirm</button>
+    </form>
+{% endblock %}
