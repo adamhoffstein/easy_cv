@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -10,6 +12,7 @@ from .models import (
     Resume,
     ResumeEducation,
 )
+from django.core.exceptions import ValidationError
 
 
 class JobDescriptionForm(forms.ModelForm):
@@ -104,3 +107,13 @@ class ResumeEducationForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Save Education"))
+
+
+class TagBulkImportForm(forms.Form):
+    tags = forms.CharField()
+
+    def clean_tags(self):
+        data = self.cleaned_data["tags"]
+        if not re.match(r"^[0-9a-zA-Z\-\s]+(,[0-9a-zA-Z\-\s]+)*$", data):
+            raise ValidationError("Tags must be separated by commas")
+        return data

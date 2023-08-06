@@ -3,6 +3,7 @@
     <div class="mb-3">
         <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
         <a href="{% url 'tag_add' %}" class="btn btn-primary">Add</a>
+        <a href="{% url 'tag_bulk_import' %}" class="btn btn-primary">Bulk Add</a>
     </div>
     {% if tag_list %}
         {% for tag in tag_list %}

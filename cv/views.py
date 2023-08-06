@@ -10,6 +10,7 @@ from .forms import (
     ResumeJobForm,
     ResumeForm,
     ResumeEducationForm,
+    TagBulkImportForm,
 )
 from .models import (
     JobDescription,
@@ -28,6 +29,18 @@ def index(request):
 class CompanyAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         return Company.objects.all().order_by("-name")
+
+
+class TagBulkImportView(generic.edit.FormView):
+    template_name = "cv/tag_bulk_import_form.html"
+    form_class = TagBulkImportForm
+    success_url = "/tags"
+
+    def form_valid(self, form):
+        for tag in [t.strip() for t in form.cleaned_data["tags"].split(",")]:
+            if not Tag.objects.filter(name=tag).first():
+                Tag.objects.create(name=tag, keywords=tag)
+        return super().form_valid(form)
 
 
 class TagCreateView(generic.CreateView):

@@ -66,6 +66,11 @@ urlpatterns = [
         name="tag_delete",
     ),
     path(
+        "tags/bulk_import/",
+        views.TagBulkImportView.as_view(),
+        name="tag_bulk_import",
+    ),
+    path(
         "companies",
         views.CompanyListView.as_view(),
         name="company_list",

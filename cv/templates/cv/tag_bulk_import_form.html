@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            {% csrf_token %}
+            {{ form | crispy }}
+        </div>
+        <div class="row mt-2">
+            <div class="d-grid gap-2">
+                <a href="{% url 'tag_list' %}" class="btn btn-primary">Back</a>
+                <button type="submit" class="save btn btn-primary">Save</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
