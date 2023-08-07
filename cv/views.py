@@ -70,6 +70,14 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
         )
 
 
+def assign_inline_category_owner(form, request) -> None:
+    if category := form.cleaned_data.get("category"):
+        if not category.created_by:
+            category.created_by = request.user
+            category.last_edited_by = request.user
+            category.save()
+
+
 class TagBulkImportView(generic.edit.FormView):
     template_name = "cv/tag_bulk_import_form.html"
     form_class = TagBulkImportForm
@@ -79,6 +87,7 @@ class TagBulkImportView(generic.edit.FormView):
         for tag in [
             t.strip().title() for t in form.cleaned_data["tags"].split(",")
         ]:
+            assign_inline_category_owner(form=form, request=self.request)
             if not Tag.objects.filter(name=tag).first():
                 Tag.objects.create(
                     name=tag,
@@ -94,6 +103,10 @@ class TagBulkImportView(generic.edit.FormView):
 class TagCreateView(CreatedByView):
     model = Tag
     form_class = TagForm
+
+    def form_valid(self, form):
+        assign_inline_category_owner(form=form, request=self.request)
+        return super(TagCreateView, self).form_valid(form)
 
 
 class TagListView(generic.ListView):
@@ -112,6 +125,10 @@ class TagListView(generic.ListView):
 class TagUpdateView(EditedByView):
     model = Tag
     form_class = TagForm
+
+    def form_valid(self, form):
+        assign_inline_category_owner(form=form, request=self.request)
+        return super(TagUpdateView, self).form_valid(form)
 
     def get_queryset(self):
         return Tag.objects.filter(created_by=self.request.user).all()
