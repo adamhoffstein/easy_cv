@@ -18,12 +18,8 @@
 
     <div class="row mt-2">
         <div class="col">
-            <p>Name: {{ tag.name }}</p>
-        </div>
-        <div class="col">
-
-            <p>Show in CV: {% if tag.show_in_cv %}<i class="fa-regular fa-square-check"></i>{% else %}
-                <i class="fa-solid fa-square"></i></p>
+            <p>Name: {{ tag.name }}, Show in CV: {% if tag.show_in_cv %}<i class="fa-regular fa-square-check"></i>{% else %}
+                <i class="fa-solid fa-square"></i>
             {% endif %}
         </div>
     </div>

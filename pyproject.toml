@@ -15,6 +15,7 @@ django-crispy-forms = "^2.0"
 crispy-bootstrap5 = "^0.7"
 django-autocomplete-light = "^3.9.7"
 fontawesomefree = "^6.4.2"
+django-registration = "^3.4"
 
 
 [tool.poetry.group.dev.dependencies]

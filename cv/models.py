@@ -1,12 +1,16 @@
 import re
 from abc import abstractmethod
 
+from django.contrib.auth.models import User, Permission
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.http import HttpRequest
 from django.urls import reverse
+from django_registration.backends.one_step.views import RegistrationView
+from django_registration.signals import user_registered
 from model_utils import fields
 from simple_history.models import HistoricalRecords
 
@@ -105,7 +109,7 @@ class Tag(BaseModel):
 
 
 class Company(BaseModel):
-    name = models.CharField(max_length=120, unique=True, blank=True)
+    name = models.CharField(max_length=120, unique=True)
     updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
@@ -253,6 +257,18 @@ def get_tags_for(raw_text: str) -> list[Tag]:
                 if tag in jd_tags:
                     jd_tags.remove(tag)
     return list(jd_tags)
+
+
+@receiver(user_registered, sender=RegistrationView)
+def add_default_permissions(
+    sender: RegistrationView, user: User, request: HttpRequest, **kwargs
+) -> None:
+    add_company_permission = Permission.objects.get(name="Can add Company")
+    add_category_permission = Permission.objects.get(
+        name="Can add Tag category"
+    )
+    user.user_permissions.add(add_company_permission)
+    user.user_permissions.add(add_category_permission)
 
 
 @receiver(post_save, sender=JobDescription)

@@ -24,23 +24,50 @@ from .models import (
 )
 
 
+class CreatedByView(generic.CreateView):
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.created_by = self.request.user
+        obj.last_edited_by = self.request.user
+        return super(CreatedByView, self).form_valid(form)
+
+
+class EditedByView(generic.UpdateView):
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.last_edited_by = self.request.user
+        return super(EditedByView, self).form_valid(form)
+
+
 def index(request):
     return render(request, "cv/index.html")
 
 
 class CompanyAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        return Company.objects.all().order_by("-name")
+        return (
+            Company.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-name")
+        )
 
 
 class TagCategoryAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        return TagCategory.objects.all().order_by("-name")
+        return (
+            TagCategory.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-name")
+        )
 
 
 class TagAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        return Tag.objects.all().order_by("-name")
+        return (
+            Tag.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-name")
+        )
 
 
 class TagBulkImportView(generic.edit.FormView):
@@ -58,11 +85,13 @@ class TagBulkImportView(generic.edit.FormView):
                     keywords=tag,
                     category=form.cleaned_data["category"],
                     show_in_cv=form.cleaned_data["show_in_cv"],
+                    created_by=self.request.user,
+                    last_edited_by=self.request.user,
                 )
         return super().form_valid(form)
 
 
-class TagCreateView(generic.CreateView):
+class TagCreateView(CreatedByView):
     model = Tag
     form_class = TagForm
 
@@ -73,15 +102,19 @@ class TagListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[Tag]:
-        return Tag.objects.all().order_by("-created_at")
+        return (
+            Tag.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class TagUpdateView(generic.UpdateView):
+class TagUpdateView(EditedByView):
     model = Tag
     form_class = TagForm
 
     def get_queryset(self):
-        return Tag.objects.all()
+        return Tag.objects.filter(created_by=self.request.user).all()
 
 
 class TagDetailView(generic.DetailView):
@@ -89,7 +122,7 @@ class TagDetailView(generic.DetailView):
     context_object_name = "tag"
 
     def get_queryset(self):
-        return Tag.objects.all()
+        return Tag.objects.filter(created_by=self.request.user).all()
 
 
 class TagDeleteView(generic.DeleteView):
@@ -97,7 +130,7 @@ class TagDeleteView(generic.DeleteView):
     success_url = reverse_lazy("tag_list")
 
 
-class JobDescriptionCreateView(generic.CreateView):
+class JobDescriptionCreateView(CreatedByView):
     model = JobDescription
     form_class = JobDescriptionForm
 
@@ -108,15 +141,21 @@ class JobDescriptionListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[JobDescription]:
-        return JobDescription.objects.all().order_by("-created_at")
+        return (
+            JobDescription.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class JobDescriptionUpdateView(generic.UpdateView):
+class JobDescriptionUpdateView(EditedByView):
     model = JobDescription
     form_class = JobDescriptionForm
 
     def get_queryset(self):
-        return JobDescription.objects.all()
+        return JobDescription.objects.filter(
+            created_by=self.request.user
+        ).all()
 
 
 class JobDescriptionDetailView(generic.DetailView):
@@ -124,7 +163,9 @@ class JobDescriptionDetailView(generic.DetailView):
     context_object_name = "job_description"
 
     def get_queryset(self):
-        return JobDescription.objects.all()
+        return JobDescription.objects.filter(
+            created_by=self.request.user
+        ).all()
 
 
 class JobDescriptionDeleteView(generic.DeleteView):
@@ -132,7 +173,7 @@ class JobDescriptionDeleteView(generic.DeleteView):
     success_url = reverse_lazy("job_description_list")
 
 
-class CompanyCreateView(generic.CreateView):
+class CompanyCreateView(CreatedByView):
     model = Company
     fields = ["name"]
 
@@ -143,15 +184,19 @@ class CompanyListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[Tag]:
-        return Company.objects.all().order_by("-created_at")
+        return (
+            Company.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class CompanyUpdateView(generic.UpdateView):
+class CompanyUpdateView(EditedByView):
     model = Company
     form_class = CompanyForm
 
     def get_queryset(self):
-        return Tag.objects.all()
+        return Tag.objects.filter(created_by=self.request.user).all()
 
 
 class CompanyDetailView(generic.DetailView):
@@ -159,7 +204,7 @@ class CompanyDetailView(generic.DetailView):
     context_object_name = "company"
 
     def get_queryset(self):
-        return Company.objects.all()
+        return Company.objects.filter(created_by=self.request.user).all()
 
 
 class CompanyDeleteView(generic.DeleteView):
@@ -167,7 +212,7 @@ class CompanyDeleteView(generic.DeleteView):
     success_url = reverse_lazy("company_list")
 
 
-class ResumeJobCreateView(generic.CreateView):
+class ResumeJobCreateView(CreatedByView):
     model = ResumeJob
     form_class = ResumeJobForm
 
@@ -178,15 +223,19 @@ class ResumeJobListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[ResumeJob]:
-        return ResumeJob.objects.all().order_by("-created_at")
+        return (
+            ResumeJob.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class ResumeJobUpdateView(generic.UpdateView):
+class ResumeJobUpdateView(EditedByView):
     model = ResumeJob
     form_class = ResumeJobForm
 
     def get_queryset(self):
-        return ResumeJob.objects.all()
+        return ResumeJob.objects.filter(created_by=self.request.user).all()
 
 
 class ResumeJobDetailView(generic.DetailView):
@@ -194,7 +243,7 @@ class ResumeJobDetailView(generic.DetailView):
     context_object_name = "resumejob"
 
     def get_queryset(self):
-        return ResumeJob.objects.all()
+        return ResumeJob.objects.filter(created_by=self.request.user).all()
 
 
 class ResumeJobDeleteView(generic.DeleteView):
@@ -202,7 +251,7 @@ class ResumeJobDeleteView(generic.DeleteView):
     success_url = reverse_lazy("resume_job_list")
 
 
-class ResumeCreateView(generic.CreateView):
+class ResumeCreateView(CreatedByView):
     model = Resume
     form_class = ResumeForm
 
@@ -213,15 +262,19 @@ class ResumeListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[Resume]:
-        return Resume.objects.all().order_by("-created_at")
+        return (
+            Resume.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class ResumeUpdateView(generic.UpdateView):
+class ResumeUpdateView(EditedByView):
     model = Resume
     form_class = ResumeForm
 
     def get_queryset(self):
-        return Resume.objects.all()
+        return Resume.objects.filter(created_by=self.request.user).all()
 
 
 class ResumeDetailView(generic.DetailView):
@@ -229,7 +282,7 @@ class ResumeDetailView(generic.DetailView):
     context_object_name = "resume"
 
     def get_queryset(self):
-        return Resume.objects.all()
+        return Resume.objects.filter(created_by=self.request.user).all()
 
 
 class ResumeDeleteView(generic.DeleteView):
@@ -237,7 +290,7 @@ class ResumeDeleteView(generic.DeleteView):
     success_url = reverse_lazy("resume_list")
 
 
-class ResumeEducationCreateView(generic.CreateView):
+class ResumeEducationCreateView(CreatedByView):
     model = ResumeEducation
     form_class = ResumeEducationForm
 
@@ -248,15 +301,21 @@ class ResumeEducationListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[ResumeEducation]:
-        return ResumeEducation.objects.all().order_by("-created_at")
+        return (
+            ResumeEducation.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
-class ResumeEducationUpdateView(generic.UpdateView):
+class ResumeEducationUpdateView(EditedByView):
     model = ResumeEducation
     form_class = ResumeEducationForm
 
     def get_queryset(self):
-        return ResumeEducation.objects.all()
+        return ResumeEducation.objects.filter(
+            created_by=self.request.user
+        ).all()
 
 
 class ResumeEducationDetailView(generic.DetailView):
@@ -264,7 +323,9 @@ class ResumeEducationDetailView(generic.DetailView):
     context_object_name = "resume_education"
 
     def get_queryset(self):
-        return ResumeEducation.objects.all()
+        return ResumeEducation.objects.filter(
+            created_by=self.request.user
+        ).all()
 
 
 class ResumeEducationDeleteView(generic.DeleteView):
@@ -279,7 +340,9 @@ class TagCategoryCreateView(generic.edit.FormView):
 
     def form_valid(self, form):
         tag_category = TagCategory.objects.create(
-            name=form.cleaned_data["name"]
+            name=form.cleaned_data["name"],
+            created_by=self.request.user,
+            last_edited_by=self.request.user,
         )
         tag_category.tags.set(form.cleaned_data["tags"].all())
         return super().form_valid(form)
@@ -291,7 +354,11 @@ class TagCategoryListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> list[Tag]:
-        return TagCategory.objects.all().order_by("-created_at")
+        return (
+            TagCategory.objects.filter(created_by=self.request.user)
+            .all()
+            .order_by("-created_at")
+        )
 
 
 class TagCategoryUpdateView(generic.edit.FormView):
@@ -301,15 +368,20 @@ class TagCategoryUpdateView(generic.edit.FormView):
 
     def get_initial(self):
         initial = super().get_initial()
-        tag_category = TagCategory.objects.get(id=self.kwargs["pk"])
+        tag_category = TagCategory.objects.get(
+            id=self.kwargs["pk"], created_by=self.request.user
+        )
         initial["name"] = tag_category.name
         initial["tags"] = tag_category.tags.all()
         return initial
 
     def form_valid(self, form):
-        tag_category = TagCategory.objects.get(id=self.kwargs["pk"])
+        tag_category = TagCategory.objects.get(
+            id=self.kwargs["pk"], created_by=self.request.user
+        )
         tag_category.name = form.cleaned_data["name"]
         tag_category.tags.set(form.cleaned_data["tags"].all())
+        tag_category.last_edited_by = self.request.user
         tag_category.save()
         return super().form_valid(form)
 
@@ -319,7 +391,7 @@ class TagCategoryDetailView(generic.DetailView):
     context_object_name = "tag_category"
 
     def get_queryset(self):
-        return TagCategory.objects.all()
+        return TagCategory.objects.filter(created_by=self.request.user).all()
 
 
 class TagCategoryDeleteView(generic.DeleteView):

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Logged out!</p>
+    <div>
+        <a href="{% url 'login' %}">Click here to login again.</a>
+    </div>
+    <div>
+        <a href="{% url 'django_registration_register' %}">Don't have an account? Click here to register.</a>
+    </div>
+{% endblock %}

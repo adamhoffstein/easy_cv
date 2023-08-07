@@ -14,5 +14,5 @@
 }
 
 .select2-selection__arrow {
-  margin: 10px;
+  display: none
 }
