@@ -9,7 +9,12 @@
         {% for tag in tag_list %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">{{ tag.name }}</h5>
+                    {% if tag.category %}
+                    <h5 class="card-title mb-1">{{ tag.name }}</h5>
+                    <div class="mb-2"><span class="badge bg-secondary">{{ tag.category }}</span></div>
+                    {% else %}
+                        <h5 class="card-title">{{ tag.name }}</h5>
+                    {% endif %}
                     <small class="text-muted">Last Modified {{ tag.updated_at }}</small>
                 </div>
                 <div class="card-body">

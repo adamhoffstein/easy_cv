@@ -3,14 +3,29 @@
     <span>Contains: </span>{% for keyword in tag.keyword_contains %}
     <span class="badge bg-secondary">{{ keyword }}</span>
 {% endfor %}
-    {% if tag.keyword_excludes %}
-        <br>
-        <span>Excludes: </span>{% for keyword in tag.keyword_excludes %}
-        <span class="badge bg-secondary">{{ keyword }}</span>
-    {% endfor %}
-    {% endif %}
     <div class="row mt-2">
-        <p>{{ tag.name }}</p>
+        {% if tag.keyword_excludes %}
+            <div class="col">
+                <span>Excludes: </span>{% for keyword in tag.keyword_excludes %}
+                <span class="badge bg-secondary">{{ keyword }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="col">
+            <span>Category: </span>
+            <span class="badge bg-secondary">{{ tag.category }}</span></div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col">
+            <p>Name: {{ tag.name }}</p>
+        </div>
+        <div class="col">
+
+            <p>Show in CV: {% if tag.show_in_cv %}<i class="fa-regular fa-square-check"></i>{% else %}
+                <i class="fa-solid fa-square"></i></p>
+            {% endif %}
+        </div>
     </div>
     <div class="row mt-2">
         <div class="d-grid gap-2">

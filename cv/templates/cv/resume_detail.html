@@ -15,6 +15,10 @@
     {% endfor %}
     <br>
     <h4>Skills</h4>
+    {% for skill_category in resume.skills.all %}
+        {% include "cv/macros/render_skill_category.html" %}
+    {% endfor %}
+    <br>
     <div class="row mt-2">
         <div class="d-grid gap-2">
             <a href="{% url 'resume_list' %}" class="btn btn-primary">Back</a>

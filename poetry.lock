@@ -191,6 +191,17 @@ files = [
 ]
 
 [[package]]
+name = "fontawesomefree"
+version = "6.4.2"
+description = "Font Awesome Free"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fontawesomefree-6.4.2-py3-none-any.whl", hash = "sha256:ceaff7efc4fc39dadff3c3ff7298a7a1095403110d373f22456bb1c34ab6db02"},
+]
+
+[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -286,4 +297,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3f67dc1ebb411aead2a31af8f56679259a1600db07de36403d8ac157b90abd2c"
+content-hash = "c4b177cba6e69291e3cc142de3abe3aa91dccf0111fda4f1e4cf82d1fc1ba099"

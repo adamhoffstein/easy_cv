@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="mb-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'tag_category_add' %}" class="btn btn-primary">Add</a>
+    </div>
+    {% if tag_category_list %}
+        {% for tag_category in tag_category_list %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tag_category.name }}</h5>
+                    <small class="text-muted">Last Modified {{ tag_category.updated_at }}</small>
+                </div>
+                <div class="card-body">
+                    <a href="{{ tag_category.get_absolute_url }}" class="btn btn-outline-primary">Details</a>
+                    <a href="{% url 'tag_category_edit' pk=tag_category.id %}?page=list_view" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'tag_category_delete' pk=tag_category.id %}?page=list_view"
+                       class="save btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You haven't added any skill tag categories.</p>
+    {% endif %}
+{% endblock %}

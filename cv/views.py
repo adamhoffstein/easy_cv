@@ -11,10 +11,12 @@ from .forms import (
     ResumeForm,
     ResumeEducationForm,
     TagBulkImportForm,
+    TagCategoryForm,
 )
 from .models import (
     JobDescription,
     Tag,
+    TagCategory,
     Company,
     ResumeJob,
     Resume,
@@ -31,21 +33,38 @@ class CompanyAutocomplete(autocomplete.Select2QuerySetView):
         return Company.objects.all().order_by("-name")
 
 
+class TagCategoryAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        return TagCategory.objects.all().order_by("-name")
+
+
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        return Tag.objects.all().order_by("-name")
+
+
 class TagBulkImportView(generic.edit.FormView):
     template_name = "cv/tag_bulk_import_form.html"
     form_class = TagBulkImportForm
     success_url = "/tags"
 
     def form_valid(self, form):
-        for tag in [t.strip() for t in form.cleaned_data["tags"].split(",")]:
+        for tag in [
+            t.strip().title() for t in form.cleaned_data["tags"].split(",")
+        ]:
             if not Tag.objects.filter(name=tag).first():
-                Tag.objects.create(name=tag, keywords=tag)
+                Tag.objects.create(
+                    name=tag,
+                    keywords=tag,
+                    category=form.cleaned_data["category"],
+                    show_in_cv=form.cleaned_data["show_in_cv"],
+                )
         return super().form_valid(form)
 
 
 class TagCreateView(generic.CreateView):
     model = Tag
-    fields = ["name", "keywords"]
+    form_class = TagForm
 
 
 class TagListView(generic.ListView):
@@ -251,3 +270,59 @@ class ResumeEducationDetailView(generic.DetailView):
 class ResumeEducationDeleteView(generic.DeleteView):
     model = ResumeEducation
     success_url = reverse_lazy("resume_education_list")
+
+
+class TagCategoryCreateView(generic.edit.FormView):
+    template_name = "cv/tagcategory_form.html"
+    form_class = TagCategoryForm
+    success_url = "/tag_categories"
+
+    def form_valid(self, form):
+        tag_category = TagCategory.objects.create(
+            name=form.cleaned_data["name"]
+        )
+        tag_category.tags.set(form.cleaned_data["tags"].all())
+        return super().form_valid(form)
+
+
+class TagCategoryListView(generic.ListView):
+    model = Tag
+    context_object_name = "tag_category_list"
+    paginate_by = 10
+
+    def get_queryset(self) -> list[Tag]:
+        return TagCategory.objects.all().order_by("-created_at")
+
+
+class TagCategoryUpdateView(generic.edit.FormView):
+    template_name = "cv/tagcategory_form.html"
+    form_class = TagCategoryForm
+    success_url = "/tag_categories"
+
+    def get_initial(self):
+        initial = super().get_initial()
+        tag_category = TagCategory.objects.get(id=self.kwargs["pk"])
+        initial["name"] = tag_category.name
+        initial["tags"] = tag_category.tags.all()
+        return initial
+
+    def form_valid(self, form):
+        tag_category = TagCategory.objects.get(id=self.kwargs["pk"])
+        tag_category.name = form.cleaned_data["name"]
+        tag_category.tags.set(form.cleaned_data["tags"].all())
+        tag_category.save()
+        return super().form_valid(form)
+
+
+class TagCategoryDetailView(generic.DetailView):
+    model = TagCategory
+    context_object_name = "tag_category"
+
+    def get_queryset(self):
+        return TagCategory.objects.all()
+
+
+class TagCategoryDeleteView(generic.DeleteView):
+    model = TagCategory
+    context_object_name = "tag_category"
+    success_url = reverse_lazy("tag_category_list")

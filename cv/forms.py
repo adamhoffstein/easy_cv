@@ -11,6 +11,7 @@ from .models import (
     ResumeJob,
     Resume,
     ResumeEducation,
+    TagCategory,
 )
 from django.core.exceptions import ValidationError
 
@@ -21,6 +22,9 @@ class JobDescriptionForm(forms.ModelForm):
         fields = ("title", "raw_text", "company")
         widgets = {
             "company": autocomplete.ModelSelect2(url="company-autocomplete")
+        }
+        help_texts = {
+            "raw_text": "Paste the raw text of the job description here"
         }
 
     def __init__(self, *args, **kwargs):
@@ -33,7 +37,12 @@ class JobDescriptionForm(forms.ModelForm):
 class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
-        fields = ("name", "keywords")
+        fields = ("name", "keywords", "category", "show_in_cv")
+        widgets = {
+            "category": autocomplete.ModelSelect2(
+                url="tag-category-autocomplete"
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -110,10 +119,32 @@ class ResumeEducationForm(forms.ModelForm):
 
 
 class TagBulkImportForm(forms.Form):
-    tags = forms.CharField()
+    tags = forms.CharField(
+        help_text="Enter one or more tags seperated by commas"
+    )
+    category = forms.ModelChoiceField(
+        queryset=TagCategory.objects.all(),
+        widget=autocomplete.ModelSelect2(url="tag-category-autocomplete"),
+        required=False,
+    )
+    show_in_cv = forms.BooleanField(required=False)
 
     def clean_tags(self):
         data = self.cleaned_data["tags"]
         if not re.match(r"^[0-9a-zA-Z\-\s]+(,[0-9a-zA-Z\-\s]+)*$", data):
             raise ValidationError("Tags must be separated by commas")
         return data
+
+
+class TagCategoryForm(forms.Form):
+    name = forms.CharField()
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(url="tag-autocomplete"),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Save Tag"))

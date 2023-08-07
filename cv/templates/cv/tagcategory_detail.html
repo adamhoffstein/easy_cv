@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <span>Tags: </span>
+    {% if tag_category.tags.exists %}
+        {% for tag in tag_category.tags.all %}
+            <span class="badge bg-secondary">{{ tag | title }}</span>
+        {% endfor %}
+        {% else %}
+        <span>None :(</span>
+    {% endif %}
+    <div class="row mt-2">
+        <small class="text-muted">Created {{ tag_category.created_at }}</small>
+        <p>{{ tag_category.name }}</p>
+    </div>
+    <div class="row mt-2">
+        <div class="d-grid gap-2">
+            <a href="{% url 'tag_category_list' %}" class="btn btn-primary">Back</a>
+            <a href="{% url 'tag_category_edit' pk=tag_category.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'tag_category_delete' pk=tag_category.id %}" class="save btn btn-danger">Delete</a>
+        </div>
+    </div>
+{% endblock %}

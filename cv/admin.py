@@ -5,6 +5,7 @@ from .models import (
     ResumeJob,
     ResumeJobDuty,
     Tag,
+    TagCategory,
     ExperiencePoint,
     Company,
     JobDescription,
@@ -28,6 +29,11 @@ class ResumeJobAdmin(BaseAdmin):
 @admin.register(ResumeJobDuty)
 class ResumeJobDutyAdmin(BaseAdmin):
     list_display = ["title", "created_at", "updated_at"]
+
+
+@admin.register(TagCategory)
+class TagCategoryAdmin(BaseAdmin):
+    list_display = ["name", "created_at", "updated_at"]
 
 
 @admin.register(Tag)

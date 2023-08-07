@@ -16,6 +16,18 @@ urlpatterns = [
         name="company-autocomplete",
     ),
     path(
+        "tag-category-autocomplete",
+        views.TagCategoryAutocomplete.as_view(
+            create_field="name", validate_create=True
+        ),
+        name="tag-category-autocomplete",
+    ),
+    path(
+        "tag-autocomplete",
+        views.TagAutocomplete.as_view(),
+        name="tag-autocomplete",
+    ),
+    path(
         "job_descriptions",
         views.JobDescriptionListView.as_view(),
         name="job_description_list",
@@ -169,5 +181,30 @@ urlpatterns = [
         "education/delete/<int:pk>/",
         views.ResumeEducationDeleteView.as_view(),
         name="resume_education_delete",
+    ),
+    path(
+        "tag_categories",
+        views.TagCategoryListView.as_view(),
+        name="tag_category_list",
+    ),
+    path(
+        "tag_categories/add/",
+        views.TagCategoryCreateView.as_view(),
+        name="tag_category_add",
+    ),
+    path(
+        "tag_categories/edit/<int:pk>/",
+        views.TagCategoryUpdateView.as_view(),
+        name="tag_category_edit",
+    ),
+    path(
+        "tag_categories/details/<int:pk>/",
+        views.TagCategoryDetailView.as_view(),
+        name="tag_category_details",
+    ),
+    path(
+        "tag_categories/delete/<int:pk>/",
+        views.TagCategoryDeleteView.as_view(),
+        name="tag_category_delete",
     ),
 ]

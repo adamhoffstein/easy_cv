@@ -37,8 +37,36 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class TagCategory(BaseModel):
+    name = models.CharField(max_length=120, unique=True)
+    updated_at = fields.AutoLastModifiedField()
+    history = HistoricalRecords()
+
+    def __str__(self) -> str:
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("tag_category_details", kwargs={"pk": self.pk})
+
+    @property
+    def display_tags(self) -> ["Tag"]:
+        return [t for t in self.tags if t.show_in_cv]
+
+    class Meta:
+        verbose_name = "Tag category"
+        verbose_name_plural = "Tag categories"
+
+
 class Tag(BaseModel):
     name = models.CharField(max_length=120, unique=True)
+    category = models.ForeignKey(
+        TagCategory,
+        on_delete=models.SET_NULL,
+        related_name="tags",
+        null=True,
+        blank=True,
+    )
+    show_in_cv = models.BooleanField(default=True)
     updated_at = fields.AutoLastModifiedField()
     keywords = models.CharField(
         max_length=500,
@@ -166,12 +194,26 @@ class ResumeEducation(BaseModel):
         return f"{self.degree} - {self.school}, {self.location} ({self.end_at_year})"
 
 
+# Might not be necessary
+class ResumeSkillSet(BaseModel):
+    name = models.CharField(max_length=120)
+    updated_at = fields.AutoLastModifiedField()
+    tags = models.ManyToManyField(Tag)
+    history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse("resume_skill_set_details", kwargs={"pk": self.pk})
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Resume(BaseModel):
     title = models.CharField(max_length=120)
     updated_at = fields.AutoLastModifiedField()
     jobs = models.ManyToManyField(ResumeJob)
     education = models.ManyToManyField(ResumeEducation)
-    skills = models.TextField(max_length=1000, null=True)
+    skills = models.ManyToManyField(TagCategory)
     languages = models.CharField(max_length=500, null=True)
     history = HistoricalRecords()
 
