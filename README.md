@@ -9,8 +9,6 @@ show-casing the parts of your job duties that match it most.
 
 # Quickstart
 
----
-
 ## Prerequisites
 
 - Python (>= 3.11)
