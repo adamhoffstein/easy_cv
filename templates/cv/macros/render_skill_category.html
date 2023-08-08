@@ -1,7 +1,7 @@
 <div>
     <ul>
         <li><b>{{ skill_category }}:</b>
-            {% for skill in skill_category.tags.all %}{{ skill }}{% if forloop.last %},{% else %},
+            {% for skill in skill_category.display_tags %}{{ skill }}{% if forloop.last %},{% else %},
                     {% endif %}
             {% endfor %}</li>
     </ul>

@@ -4,7 +4,7 @@
             <p><b>{{ education.school }}</b> {{ education.location }}</p>
         </div>
         <div class="col-auto">
-            <p>{% if education.start_year %}{{ education.start_at_year }} - {% endif %}{{ education.end_at_year }}</p>
+            <p>{% if education.start_year %}{{ education.start_at_year.year }} - {% endif %}{{ education.end_at_year.year }}</p>
         </div>
     </div>
 </div>

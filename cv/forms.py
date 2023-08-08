@@ -93,8 +93,17 @@ class ResumeForm(forms.ModelForm):
             "languages",
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, current_user, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["jobs"].queryset = ResumeJob.objects.filter(
+            created_by_id=current_user.id
+        )
+        self.fields["education"].queryset = ResumeEducation.objects.filter(
+            created_by_id=current_user.id
+        )
+        self.fields["skills"].queryset = TagCategory.objects.filter(
+            created_by_id=current_user.id
+        )
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Save Resume"))

@@ -42,7 +42,7 @@ class BaseModel(models.Model):
 
 
 class TagCategory(BaseModel):
-    name = models.CharField(max_length=120, unique=True)
+    name = models.CharField(max_length=120)
     updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
@@ -54,7 +54,7 @@ class TagCategory(BaseModel):
 
     @property
     def display_tags(self) -> ["Tag"]:
-        return [t for t in self.tags if t.show_in_cv]
+        return [t for t in self.tags.all() if t.show_in_cv]
 
     class Meta:
         verbose_name = "Tag category"
@@ -62,7 +62,7 @@ class TagCategory(BaseModel):
 
 
 class Tag(BaseModel):
-    name = models.CharField(max_length=120, unique=True)
+    name = models.CharField(max_length=120)
     category = models.ForeignKey(
         TagCategory,
         on_delete=models.SET_NULL,
@@ -187,15 +187,15 @@ class ResumeEducation(BaseModel):
     location = models.CharField(max_length=120)
     degree = models.CharField(max_length=120)
     updated_at = fields.AutoLastModifiedField()
-    start_at_year = models.IntegerField(null=True, blank=True)
-    end_at_year = models.IntegerField()
+    start_at_year = models.DateField(null=True, blank=True)
+    end_at_year = models.DateField()
     history = HistoricalRecords()
 
     def get_absolute_url(self):
         return reverse("resume_education_details", kwargs={"pk": self.pk})
 
     def __str__(self) -> str:
-        return f"{self.degree} - {self.school}, {self.location} ({self.end_at_year})"
+        return f"{self.degree} - {self.school}, {self.location} ({self.end_at_year.year})"
 
 
 # Might not be necessary

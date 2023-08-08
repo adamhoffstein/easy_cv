@@ -1,3 +1,8 @@
+from bootstrap_datepicker_plus.widgets import (
+    DatePickerInput,
+    YearPickerInput,
+    MonthPickerInput,
+)
 from dal import autocomplete
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -88,7 +93,9 @@ class TagBulkImportView(generic.edit.FormView):
             t.strip().title() for t in form.cleaned_data["tags"].split(",")
         ]:
             assign_inline_category_owner(form=form, request=self.request)
-            if not Tag.objects.filter(name=tag).first():
+            if not Tag.objects.filter(
+                name=tag, created_by=self.request.user
+            ).first():
                 Tag.objects.create(
                     name=tag,
                     keywords=tag,
@@ -233,6 +240,12 @@ class ResumeJobCreateView(CreatedByView):
     model = ResumeJob
     form_class = ResumeJobForm
 
+    def get_form(self, form_class=ResumeJobForm) -> ResumeJobForm:
+        form: ResumeJobForm = super().get_form()
+        form.fields["start_at"].widget = MonthPickerInput()
+        form.fields["end_at"].widget = MonthPickerInput()
+        return form
+
 
 class ResumeJobListView(generic.ListView):
     model = ResumeJob
@@ -250,6 +263,12 @@ class ResumeJobListView(generic.ListView):
 class ResumeJobUpdateView(EditedByView):
     model = ResumeJob
     form_class = ResumeJobForm
+
+    def get_form(self, form_class=ResumeJobForm) -> ResumeJobForm:
+        form: ResumeJobForm = super().get_form()
+        form.fields["start_at"].widget = MonthPickerInput()
+        form.fields["end_at"].widget = MonthPickerInput()
+        return form
 
     def get_queryset(self):
         return ResumeJob.objects.filter(created_by=self.request.user).all()
@@ -272,6 +291,11 @@ class ResumeCreateView(CreatedByView):
     model = Resume
     form_class = ResumeForm
 
+    def get_form_kwargs(self) -> dict:
+        kwargs = super(ResumeCreateView, self).get_form_kwargs()
+        kwargs["current_user"] = self.request.user
+        return kwargs
+
 
 class ResumeListView(generic.ListView):
     model = Resume
@@ -289,6 +313,11 @@ class ResumeListView(generic.ListView):
 class ResumeUpdateView(EditedByView):
     model = Resume
     form_class = ResumeForm
+
+    def get_form_kwargs(self) -> dict:
+        kwargs = super(ResumeUpdateView, self).get_form_kwargs()
+        kwargs["current_user"] = self.request.user
+        return kwargs
 
     def get_queryset(self):
         return Resume.objects.filter(created_by=self.request.user).all()
@@ -311,6 +340,12 @@ class ResumeEducationCreateView(CreatedByView):
     model = ResumeEducation
     form_class = ResumeEducationForm
 
+    def get_form(self, form_class=ResumeEducationForm) -> ResumeEducationForm:
+        form: ResumeEducationForm = super().get_form()
+        form.fields["start_at_year"].widget = YearPickerInput()
+        form.fields["end_at_year"].widget = YearPickerInput()
+        return form
+
 
 class ResumeEducationListView(generic.ListView):
     model = ResumeEducation
@@ -328,6 +363,12 @@ class ResumeEducationListView(generic.ListView):
 class ResumeEducationUpdateView(EditedByView):
     model = ResumeEducation
     form_class = ResumeEducationForm
+
+    def get_form(self, form_class=ResumeEducationForm) -> ResumeEducationForm:
+        form: ResumeEducationForm = super().get_form()
+        form.fields["start_at_year"].widget = YearPickerInput()
+        form.fields["end_at_year"].widget = YearPickerInput()
+        return form
 
     def get_queryset(self):
         return ResumeEducation.objects.filter(
