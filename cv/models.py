@@ -11,12 +11,12 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django_registration.backends.one_step.views import RegistrationView
 from django_registration.signals import user_registered
-from model_utils import fields
 from simple_history.models import HistoricalRecords
 
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
         "auth.User", on_delete=models.SET_NULL, null=True
     )
@@ -32,18 +32,12 @@ class BaseModel(models.Model):
     def history(self) -> HistoricalRecords:
         pass
 
-    @property
-    @abstractmethod
-    def updated_at(self) -> models.DateTimeField:
-        pass
-
     class Meta:
         abstract = True
 
 
 class TagCategory(BaseModel):
     name = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
     def __str__(self) -> str:
@@ -53,7 +47,7 @@ class TagCategory(BaseModel):
         return reverse("tag_category_details", kwargs={"pk": self.pk})
 
     @property
-    def display_tags(self) -> ["Tag"]:
+    def display_tags(self) -> list["Tag"]:
         return [t for t in self.tags.all() if t.show_in_cv]
 
     class Meta:
@@ -71,7 +65,6 @@ class Tag(BaseModel):
         blank=True,
     )
     show_in_cv = models.BooleanField(default=True)
-    updated_at = fields.AutoLastModifiedField()
     keywords = models.CharField(
         max_length=500,
         validators=[
@@ -110,7 +103,6 @@ class Tag(BaseModel):
 
 class Company(BaseModel):
     name = models.CharField(max_length=120, unique=True)
-    updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
     def __str__(self) -> str:
@@ -127,7 +119,6 @@ class Company(BaseModel):
 class ExperiencePoint(BaseModel):
     content = models.TextField(max_length=5000, default="content")
     tags = models.ManyToManyField(Tag)
-    updated_at = fields.AutoLastModifiedField()
     history = HistoricalRecords()
 
     def __str__(self) -> str:
@@ -144,7 +135,6 @@ def job_duty_validator(value: str) -> None:
 
 class ResumeJob(BaseModel):
     title = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
     company = models.CharField(max_length=120)
     company_description = models.CharField(max_length=120)
     job_duty_raw_text = models.TextField(
@@ -171,7 +161,6 @@ class ResumeJob(BaseModel):
 class ResumeJobDuty(BaseModel):
     title = models.CharField(max_length=120)
     experience_points = models.ManyToManyField(ExperiencePoint)
-    updated_at = fields.AutoLastModifiedField()
     job = models.ForeignKey(
         ResumeJob, on_delete=models.CASCADE, related_name="job_duties"
     )
@@ -186,7 +175,6 @@ class ResumeEducation(BaseModel):
     school = models.CharField(max_length=120)
     location = models.CharField(max_length=120)
     degree = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
     start_at_year = models.DateField(null=True, blank=True)
     end_at_year = models.DateField()
     history = HistoricalRecords()
@@ -198,23 +186,8 @@ class ResumeEducation(BaseModel):
         return f"{self.degree} - {self.school}, {self.location} ({self.end_at_year.year})"
 
 
-# Might not be necessary
-class ResumeSkillSet(BaseModel):
-    name = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
-    tags = models.ManyToManyField(Tag)
-    history = HistoricalRecords()
-
-    def get_absolute_url(self):
-        return reverse("resume_skill_set_details", kwargs={"pk": self.pk})
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Resume(BaseModel):
     title = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
     jobs = models.ManyToManyField(ResumeJob)
     education = models.ManyToManyField(ResumeEducation)
     skills = models.ManyToManyField(TagCategory)
@@ -230,7 +203,6 @@ class Resume(BaseModel):
 
 class JobDescription(BaseModel):
     title = models.CharField(max_length=120)
-    updated_at = fields.AutoLastModifiedField()
     raw_text = models.TextField(max_length=5000, null=True)
     tags = models.ManyToManyField(Tag)
     company = models.ForeignKey(
@@ -245,9 +217,9 @@ class JobDescription(BaseModel):
         return reverse("job_description_details", kwargs={"pk": self.pk})
 
 
-def get_tags_for(raw_text: str) -> list[Tag]:
+def get_tags_for(raw_text: str, user: User) -> list[Tag]:
     jd_tags = set()
-    for tag in Tag.objects.all():
+    for tag in Tag.objects.filter(created_by=user):
         for contains_pattern in tag.keyword_contains:
             if contains_pattern in raw_text.lower():
                 if tag not in jd_tags:
@@ -273,7 +245,7 @@ def add_default_permissions(
 
 @receiver(post_save, sender=JobDescription)
 def update_job_description_tags(sender, instance, created, **kwargs) -> None:
-    if tags := get_tags_for(instance.raw_text):
+    if tags := get_tags_for(instance.raw_text, instance.created_by):
         instance.tags.set(tags)
 
 
@@ -306,5 +278,5 @@ def update_resume_job_duties(sender, instance, created, **kwargs) -> None:
                 content=bullet_point
             )
             job_duty.experience_points.add(exp)
-            if tags := get_tags_for(bullet_point):
+            if tags := get_tags_for(bullet_point, instance.created_by):
                 exp.tags.set(tags)

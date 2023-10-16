@@ -49,6 +49,13 @@ def index(request):
 
 
 class CompanyAutocomplete(autocomplete.Select2QuerySetView):
+    def create_object(self, text):
+        return self.get_queryset().get_or_create(
+            **{self.create_field: text},
+            created_by=self.request.user,
+            last_edited_by=self.request.user,
+        )[0]
+
     def get_queryset(self):
         return (
             Company.objects.filter(created_by=self.request.user)
