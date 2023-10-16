@@ -15,7 +15,7 @@
     {% endfor %}
     <br>
     <h4>Skills</h4>
-    {% for skill_category in resume.skills %}
+    {% for skill_category in resume.skills.all %}
         {% include "cv/macros/render_skill_category.html" %}
     {% endfor %}
     <br>
